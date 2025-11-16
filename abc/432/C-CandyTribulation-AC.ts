@@ -1,27 +1,31 @@
-// WA
-
 function main(input: string): void {
   const lines = input.split('\n');
   const [N, X, Y] = lines[0].split(' ').map(BigInt);
   const A = lines[1].split(' ').map(BigInt);
 
-  let maxW: bigint = 1000000000000000000n;
-  let minW: bigint = -1000000000000000000n;
+  A.sort((a, b) => Number(a - b));
+
+  const W = A[0] * Y;
+  let answer = 0n;
 
   for (let i = 0; i < N; i++) {
-    maxW = maxW < Y * A[i] ? maxW : Y * A[i];
-    minW = minW > X * A[i] ? minW : X * A[i];
-  }
-  if (minW > maxW) {
-    console.log(-1);
-    return;
+    const w = A[i] * Y;
+
+    const diff = w - W;
+    if (diff % (Y - X) !== 0n) {
+      console.log(-1);
+      return;
+    }
+
+    const x = diff / (Y - X);
+    if (x > A[i]) {
+      console.log(-1);
+      return;
+    }
+    answer += A[i] - x;
   }
 
-  let y = 0n;
-  for (let i = 0; i < N; i++) {
-    y += (maxW - A[i] * X) / (Y - X);
-  }
-  console.log(y.toString());
+  console.log(answer.toString());
 }
 
 // ----------------------------------------
@@ -37,7 +41,6 @@ if (process.env.NODE_ENV === 'test') {
 8 4 32
 1000000000 1000000000 1000000000 1000000000 1000000000 1000000000 1000000000 1000000000
 
-${'' /* WAとなるケース。17 が返ってくるが正しい答えは -1 */}
 2 1 3
 10 15
 
